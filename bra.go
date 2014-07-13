@@ -25,7 +25,7 @@ import (
 	"github.com/Unknwon/bra/modules/log"
 )
 
-const APP_VER = "0.0.1.0711"
+const APP_VER = "0.0.2.0712"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())

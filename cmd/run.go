@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"time"
@@ -31,6 +33,9 @@ import (
 var (
 	lastBuild time.Time
 	eventTime = make(map[string]int64)
+
+	hasTask    bool
+	runningCmd *exec.Cmd
 )
 
 var CmdRun = cli.Command{
@@ -58,15 +63,34 @@ func hasWatchExt(name string) bool {
 }
 
 func notify() {
+	defer func() {
+		runningCmd = nil
+	}()
+
 	for _, cmd := range setting.Cfg.Run.Cmds {
-		stdout, stderr, err := com.ExecCmd(cmd[0], cmd[1:]...)
-		if err != nil {
-			log.Error("Fail to execute %v", cmd)
-			fmt.Println(stderr)
+		command := exec.Command(cmd[0], cmd[1:]...)
+		command.Stdout = os.Stdout
+		command.Stderr = os.Stderr
+		if err := command.Start(); err != nil {
+			log.Error("Fail to start command %v", cmd)
 			return
 		}
-		if len(stdout) > 0 {
-			fmt.Println(stdout)
+		runningCmd = command
+		done := make(chan error)
+		go func() {
+			done <- command.Wait()
+		}()
+
+		select {
+		case err := <-done:
+			if err != nil {
+				if strings.Contains(err.Error(), "signal: killed") {
+					return
+				}
+
+				log.Error("Fail to execute command %v", cmd)
+				return
+			}
 		}
 	}
 	log.Info("Notify operations are done!")
@@ -76,7 +100,7 @@ func runRun(ctx *cli.Context) {
 	watchPathes := append([]string{setting.WorkDir}, setting.Cfg.Run.WatchDirs...)
 	if setting.Cfg.Run.WatchAll {
 		subdirs := make([]string, 0, 10)
-		for _, dir := range watchPathes {
+		for _, dir := range watchPathes[1:] {
 			dirs, err := com.GetAllSubDirs(setting.UnpackPath(dir))
 			if err != nil {
 				log.Fatal("Fail to get sub-directories: %v", err)
@@ -140,7 +164,10 @@ func runRun(ctx *cli.Context) {
 
 				if needsNotify {
 					log.Info(showName)
-					notify()
+					if runningCmd != nil && runningCmd.Process != nil {
+						runningCmd.Process.Kill()
+					}
+					go notify()
 				}
 			}
 		}
