@@ -62,12 +62,12 @@ func hasWatchExt(name string) bool {
 	return false
 }
 
-func notify() {
+func notify(cmds [][]string) {
 	defer func() {
 		runningCmd = nil
 	}()
 
-	for _, cmd := range setting.Cfg.Run.Cmds {
+	for _, cmd := range cmds {
 		command := exec.Command(cmd[0], cmd[1:]...)
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
@@ -97,6 +97,8 @@ func notify() {
 }
 
 func runRun(ctx *cli.Context) {
+	go notify(setting.Cfg.Run.InitCmds)
+
 	watchPathes := append([]string{setting.WorkDir}, setting.Cfg.Run.WatchDirs...)
 	if setting.Cfg.Run.WatchAll {
 		subdirs := make([]string, 0, 10)
@@ -167,7 +169,7 @@ func runRun(ctx *cli.Context) {
 					if runningCmd != nil && runningCmd.Process != nil {
 						runningCmd.Process.Kill()
 					}
-					go notify()
+					go notify(setting.Cfg.Run.Cmds)
 				}
 			}
 		}
