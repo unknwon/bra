@@ -15,8 +15,10 @@ package cmd
 
 import (
 	"github.com/codegangsta/cli"
+
+	"github.com/Unknwon/bra/modules/setting"
 )
 
 func setup(ctx *cli.Context) {
-
+	setting.InitSetting()
 }

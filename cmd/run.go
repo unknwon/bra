@@ -42,6 +42,7 @@ var CmdRun = cli.Command{
 	Name:   "run",
 	Usage:  "start monitoring and notifying",
 	Action: runRun,
+	Flags:  []cli.Flag{},
 }
 
 // isTmpFile returns true if the event was for temporary files.
@@ -97,6 +98,8 @@ func notify(cmds [][]string) {
 }
 
 func runRun(ctx *cli.Context) {
+	setup(ctx)
+
 	go notify(setting.Cfg.Run.InitCmds)
 
 	watchPathes := append([]string{setting.WorkDir}, setting.Cfg.Run.WatchDirs...)

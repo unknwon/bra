@@ -46,7 +46,7 @@ func UnpackPath(path string) string {
 	return path
 }
 
-func init() {
+func InitSetting() {
 	var err error
 	WorkDir, err = os.Getwd()
 	if err != nil {
