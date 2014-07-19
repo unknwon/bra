@@ -16,9 +16,13 @@ package cmd
 import (
 	"github.com/codegangsta/cli"
 
+	"github.com/Unknwon/bra/modules/log"
 	"github.com/Unknwon/bra/modules/setting"
 )
 
+var AppVer string
+
 func setup(ctx *cli.Context) {
+	log.Info("App Version: %s", AppVer)
 	setting.InitSetting()
 }

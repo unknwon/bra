@@ -12,34 +12,19 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-// Bra(Brilliant Ridiculous Assistant) is a command line utility tool for Unknown.
-package main
+package cmd
 
 import (
-	"os"
-	"runtime"
-
 	"github.com/codegangsta/cli"
-
-	"github.com/Unknwon/bra/cmd"
 )
 
-const APP_VER = "0.0.4.0715"
-
-func init() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	cmd.AppVer = APP_VER
+var CmdHttp = cli.Command{
+	Name:   "http",
+	Usage:  "start a HTTP server in work directory",
+	Action: runHttp,
+	Flags:  []cli.Flag{},
 }
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "bra"
-	app.Usage = "Brilliant Ridiculous Assistant"
-	app.Version = APP_VER
-	app.Commands = []cli.Command{
-		cmd.CmdRun,
-		cmd.CmdHttp,
-	}
-	app.Flags = append(app.Flags, []cli.Flag{}...)
-	app.Run(os.Args)
+func runHttp(ctx *cli.Context) {
+	setup(ctx)
 }

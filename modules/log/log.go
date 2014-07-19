@@ -17,6 +17,7 @@ package log
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -26,8 +27,15 @@ const (
 )
 
 var (
+	NonColor    bool
 	LEVEL_FLAGS = [...]string{"DEBUG", " INFO", " WARN", "ERROR", "FATAL"}
 )
+
+func init() {
+	if runtime.GOOS == "windows" {
+		NonColor = true
+	}
+}
 
 const (
 	DEBUG = iota
@@ -38,6 +46,13 @@ const (
 )
 
 func Print(level int, format string, args ...interface{}) {
+	if NonColor {
+		fmt.Printf("%s %s [%s] %s\n",
+			PREFIX, time.Now().Format(TIME_FORMAT), LEVEL_FLAGS[level],
+			fmt.Sprintf(format, args...))
+		return
+	}
+
 	switch level {
 	case DEBUG:
 		fmt.Printf("%s \033[36m%s\033[0m [\033[34m%s\033[0m] %s\n",
@@ -61,7 +76,7 @@ func Print(level int, format string, args ...interface{}) {
 			fmt.Sprintf(format, args...))
 		os.Exit(1)
 	default:
-		fmt.Printf("%s %s %s %s\n",
+		fmt.Printf("%s %s [%s] %s\n",
 			PREFIX, time.Now().Format(TIME_FORMAT), LEVEL_FLAGS[level],
 			fmt.Sprintf(format, args...))
 	}
