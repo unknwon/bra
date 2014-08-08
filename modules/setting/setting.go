@@ -43,6 +43,7 @@ var Cfg struct {
 // UnpackPath replaces special path variables and returns full path.
 func UnpackPath(path string) string {
 	path = strings.Replace(path, "$WORKDIR", WorkDir, 1)
+	path = strings.Replace(path, "$GOPATH", com.GetGOPATHs()[0], 1)
 	return path
 }
 

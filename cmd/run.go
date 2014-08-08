@@ -111,9 +111,10 @@ func runRun(ctx *cli.Context) {
 				log.Fatal("Fail to get sub-directories: %v", err)
 			}
 			for i := range dirs {
-				dirs[i] = path.Join(dir, dirs[i])
+				if !strings.Contains(dirs[i], ".git") {
+					subdirs = append(subdirs, path.Join(dir, dirs[i]))
+				}
 			}
-			subdirs = append(subdirs, dirs...)
 		}
 		watchPathes = append(watchPathes, subdirs...)
 	}
