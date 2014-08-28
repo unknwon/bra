@@ -13,7 +13,7 @@ USAGE:
    bra [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.4.0715
+   0.0.6.0828
 
 COMMANDS:
    run		start monitoring and notifying

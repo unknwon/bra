@@ -24,7 +24,7 @@ import (
 
 	"github.com/Unknwon/com"
 	"github.com/codegangsta/cli"
-	"github.com/howeyc/fsnotify"
+	"gopkg.in/fsnotify.v1"
 
 	"github.com/Unknwon/bra/modules/log"
 	"github.com/Unknwon/bra/modules/setting"
@@ -123,23 +123,12 @@ func runRun(ctx *cli.Context) {
 	if err != nil {
 		log.Fatal("Fail to create new watcher: %v", err)
 	}
-
-	log.Info("Following directories are monitored:")
-	for i, p := range watchPathes {
-		if err = watcher.Watch(setting.UnpackPath(p)); err != nil {
-			log.Fatal("Fail to watch diretory(%s): %v", p, err)
-		}
-		if i > 0 {
-			p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
-			p = strings.Replace(p, "$WORKDIR", "\033[47;30m$WORKDIR\033[0m", 1)
-		}
-		fmt.Printf("-> %s\n", p)
-	}
+	defer watcher.Close()
 
 	go func() {
 		for {
 			select {
-			case e := <-watcher.Event:
+			case e := <-watcher.Events:
 				needsNotify := true
 
 				if isTmpFile(e.Name) || !hasWatchExt(e.Name) {
@@ -155,7 +144,7 @@ func runRun(ctx *cli.Context) {
 
 				showName := strings.Replace(e.String(), setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
 
-				if !e.IsDelete() {
+				if e.Op&fsnotify.Remove != fsnotify.Remove {
 					mt, err := com.FileMTime(e.Name)
 					if err != nil {
 						log.Error("Fail to get file modify time: %v", err)
@@ -178,5 +167,17 @@ func runRun(ctx *cli.Context) {
 			}
 		}
 	}()
+
+	log.Info("Following directories are monitored:")
+	for i, p := range watchPathes {
+		if err = watcher.Add(setting.UnpackPath(p)); err != nil {
+			log.Fatal("Fail to watch diretory(%s): %v", p, err)
+		}
+		if i > 0 {
+			p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
+			p = strings.Replace(p, "$WORKDIR", "\033[47;30m$WORKDIR\033[0m", 1)
+		}
+		fmt.Printf("-> %s\n", p)
+	}
 	select {}
 }
