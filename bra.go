@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -24,7 +24,7 @@ import (
 	"github.com/Unknwon/bra/cmd"
 )
 
-const APP_VER = "0.0.6.0828"
+const APP_VER = "0.1.0.0930"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -38,6 +38,7 @@ func main() {
 	app.Version = APP_VER
 	app.Commands = []cli.Command{
 		cmd.CmdRun,
+		cmd.CmdSync,
 		// cmd.CmdHttp,
 	}
 	app.Flags = append(app.Flags, []cli.Flag{}...)

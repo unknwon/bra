@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -20,6 +20,7 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Unknwon/com"
@@ -34,8 +35,8 @@ var (
 	lastBuild time.Time
 	eventTime = make(map[string]int64)
 
-	hasTask    bool
-	runningCmd *exec.Cmd
+	runningCmd  *exec.Cmd
+	runningLock = &sync.Mutex{}
 )
 
 var CmdRun = cli.Command{
@@ -64,8 +65,10 @@ func hasWatchExt(name string) bool {
 }
 
 func notify(cmds [][]string) {
+	runningLock.Lock()
 	defer func() {
 		runningCmd = nil
+		runningLock.Unlock()
 	}()
 
 	for _, cmd := range cmds {

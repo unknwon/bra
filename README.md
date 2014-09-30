@@ -13,15 +13,16 @@ USAGE:
    bra [global options] command [command options] [arguments...]
 
 VERSION:
-   0.0.6.0828
+   0.1.0.0930
 
 COMMANDS:
    run		start monitoring and notifying
+   sync		keep syncing two end points
    help, h	Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --version, -v	print the version
    --help, -h		show help
+   --version, -v	print the version
 ```
 
 ## Configuration

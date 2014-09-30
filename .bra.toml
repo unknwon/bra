@@ -12,3 +12,6 @@ build_delay = 1500		# Minimal interval to Trigger build event
 cmds = [
 	["go", "install"]	
 ]						# Commands to run
+
+[sync]
+addr = ":5050"
