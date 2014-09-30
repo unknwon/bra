@@ -85,12 +85,16 @@ func receiveHandler(conn net.Conn) {
 }
 
 func runServer(ctx *cli.Context) {
-	l, err := net.Listen("tcp", setting.Cfg.Sync.Addr)
-	if err != nil {
-		log.Fatal("Fail to start server on listening(%s): %v", setting.Cfg.Sync.Addr, err)
+	if len(setting.Cfg.Sync.ListenAddr) == 0 {
+		log.Fatal("Listen address cannot be empty")
 	}
 
-	log.Info("Listening on %s...", setting.Cfg.Sync.Addr)
+	l, err := net.Listen("tcp", setting.Cfg.Sync.ListenAddr)
+	if err != nil {
+		log.Fatal("Fail to start server on listening(%s): %v", setting.Cfg.Sync.ListenAddr, err)
+	}
+
+	log.Info("Listening on %s...", setting.Cfg.Sync.ListenAddr)
 	for {
 		conn, err := l.Accept()
 		if err != nil {
@@ -120,7 +124,7 @@ func sendFile(fileName string) {
 	fileName = strings.Replace(fileName, "\\", "/", -1) //path.Base()
 	log.Info("File name: %s; size: %s", fileName, com.HumaneFileSize(uint64(fi.Size())))
 
-	conn, err := net.Dial("tcp", setting.Cfg.Sync.Addr)
+	conn, err := net.Dial("tcp", setting.Cfg.Sync.RemoteAddr)
 	if err != nil {
 		log.Error("Fail to establish connection: %v", err)
 		return
@@ -153,6 +157,10 @@ func sendFile(fileName string) {
 }
 
 func runClient(ctx *cli.Context) {
+	if len(setting.Cfg.Sync.RemoteAddr) == 0 {
+		log.Fatal("Remote address cannot be empty")
+	}
+
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal("Fail to create new watcher: %v", err)
@@ -201,9 +209,6 @@ func runClient(ctx *cli.Context) {
 func runSync(ctx *cli.Context) {
 	setup(ctx)
 
-	if len(setting.Cfg.Sync.Addr) == 0 {
-		log.Fatal("Listen or remote address cannot be empty")
-	}
 	switch ctx.String("mode") {
 	case "server":
 		runServer(ctx)

@@ -39,7 +39,8 @@ var Cfg struct {
 		Cmds       [][]string `toml:"cmds"`
 	} `toml:"run"`
 	Sync struct {
-		Addr string `toml:"addr"`
+		ListenAddr string `toml:"listen_addr"`
+		RemoteAddr string `toml:"remote_addr"`
 	} `toml:"sync"`
 }
 
