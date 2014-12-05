@@ -77,6 +77,7 @@ func notify(cmds [][]string) {
 		command.Stderr = os.Stderr
 		if err := command.Start(); err != nil {
 			log.Error("Fail to start command %v", cmd)
+			fmt.Print("\x07")
 			return
 		}
 		runningCmd = command
@@ -93,6 +94,7 @@ func notify(cmds [][]string) {
 				}
 
 				log.Error("Fail to execute command %v", cmd)
+				fmt.Print("\x07")
 				return
 			}
 		}
