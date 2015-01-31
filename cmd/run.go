@@ -147,7 +147,10 @@ func runRun(ctx *cli.Context) {
 				}
 				lastBuild = time.Now()
 
-				showName := strings.Replace(e.String(), setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
+				showName := e.String()
+				if !log.NonColor {
+					showName = strings.Replace(showName, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
+				}
 
 				if e.Op&fsnotify.Remove != fsnotify.Remove {
 					mt, err := com.FileMTime(e.Name)
@@ -178,7 +181,7 @@ func runRun(ctx *cli.Context) {
 		if err = watcher.Add(setting.UnpackPath(p)); err != nil {
 			log.Fatal("Fail to watch diretory(%s): %v", p, err)
 		}
-		if i > 0 {
+		if i > 0 && !log.NonColor {
 			p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
 			p = strings.Replace(p, "$WORKDIR", "\033[47;30m$WORKDIR\033[0m", 1)
 		}
