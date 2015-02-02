@@ -33,8 +33,8 @@ func init() {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "bra"
-	app.Usage = "Brilliant Ridiculous Assistant"
+	app.Name = "Bra"
+	app.Usage = "Brilliant Ridiculous Assistant is a command line utility tool for Unknwon."
 	app.Version = APP_VER
 	app.Commands = []cli.Command{
 		cmd.CmdRun,
