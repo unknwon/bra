@@ -93,7 +93,7 @@ func notify(cmds [][]string) {
 					return
 				}
 
-				log.Error("Fail to execute command %v", cmd)
+				log.Warn("Fail to execute command %v", cmd)
 				fmt.Print("\x07")
 				return
 			}
@@ -168,7 +168,22 @@ func runRun(ctx *cli.Context) {
 				if needsNotify {
 					log.Info(showName)
 					if runningCmd != nil && runningCmd.Process != nil {
-						runningCmd.Process.Kill()
+						log.Info("killing...")
+
+						if runningCmd.Args[0] == "sudo" && runtime.GOOS == "linux" {
+							// 给父进程发送一个TERM信号，试图杀死它和它的子进程
+							rootCmd := exec.Command("sudo", "kill", "-TERM", strconv.Itoa(runningCmd.Process.Pid))
+							rootCmd.Stdout = os.Stdout
+							rootCmd.Stderr = os.Stderr
+							if err := rootCmd.Run(); err != nil {
+								log.Error("Fail to start rootCmd %s", err.Error())
+								fmt.Print("\x07")
+							}
+						} else {
+							runningCmd.Process.Kill()
+						}
+
+						log.Info("killed.")
 					}
 					go notify(setting.Cfg.Run.Cmds)
 				}
