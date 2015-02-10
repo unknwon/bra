@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -168,11 +169,9 @@ func runRun(ctx *cli.Context) {
 				if needsNotify {
 					log.Info(showName)
 					if runningCmd != nil && runningCmd.Process != nil {
-						log.Info("killing...")
-
 						if runningCmd.Args[0] == "sudo" && runtime.GOOS == "linux" {
 							// 给父进程发送一个TERM信号，试图杀死它和它的子进程
-							rootCmd := exec.Command("sudo", "kill", "-TERM", strconv.Itoa(runningCmd.Process.Pid))
+							rootCmd := exec.Command("sudo", "kill", "-TERM", com.ToStr(runningCmd.Process.Pid))
 							rootCmd.Stdout = os.Stdout
 							rootCmd.Stderr = os.Stderr
 							if err := rootCmd.Run(); err != nil {
@@ -182,8 +181,6 @@ func runRun(ctx *cli.Context) {
 						} else {
 							runningCmd.Process.Kill()
 						}
-
-						log.Info("killed.")
 					}
 					go notify(setting.Cfg.Run.Cmds)
 				}
