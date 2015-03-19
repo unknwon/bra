@@ -7,15 +7,19 @@ Bra(Brilliant Ridiculous Assistant) is a command line utility tool.
 
 ```
 NAME:
-   bra - Brilliant Ridiculous Assistant
+   Bra - Brilliant Ridiculous Assistant is a command line utility tool.
 
 USAGE:
-   bra [global options] command [command options] [arguments...]
+   Bra [global options] command [command options] [arguments...]
 
 VERSION:
-   0.1.2.0130
+   0.2.0.0319
+
+AUTHOR:
+  Author - <unknown@email>
 
 COMMANDS:
+   init		initialize config template file
    run		start monitoring and notifying
    sync		keep syncing two end points
    help, h	Shows a list of commands or help for one command
@@ -25,9 +29,17 @@ GLOBAL OPTIONS:
    --version, -v	print the version
 ```
 
+## Quick Start
+
+To work with a new app, you have to have a `.bra.toml` file under the work directory. You can quickly generate a default one by executing following command:
+
+```
+$ bra init
+```
+
 ## Configuration
 
-You have to have a `.bra.toml` file under the work directory. An example configuration take form [gogsweb](https://github.com/gogits/gogsweb):
+An example configuration take form [gogsweb](https://github.com/gogits/gogsweb):
 
 ```
 [run]
