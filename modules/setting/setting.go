@@ -21,8 +21,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/Unknwon/com"
-
-	"github.com/Unknwon/bra/modules/log"
+	"github.com/Unknwon/log"
 )
 
 var (

@@ -14,9 +14,9 @@
 package cmd
 
 import (
+	"github.com/Unknwon/log"
 	"github.com/codegangsta/cli"
 
-	"github.com/Unknwon/bra/modules/log"
 	"github.com/Unknwon/bra/modules/setting"
 )
 

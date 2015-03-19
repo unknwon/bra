@@ -12,7 +12,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-// Bra(Brilliant Ridiculous Assistant) is a command line utility tool for Unknwon.
+// Bra(Brilliant Ridiculous Assistant) is a command line utility tool.
 package main
 
 import (
@@ -24,7 +24,7 @@ import (
 	"github.com/Unknwon/bra/cmd"
 )
 
-const APP_VER = "0.1.3.0210"
+const APP_VER = "0.2.0.0319"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -34,9 +34,10 @@ func init() {
 func main() {
 	app := cli.NewApp()
 	app.Name = "Bra"
-	app.Usage = "Brilliant Ridiculous Assistant is a command line utility tool for Unknwon."
+	app.Usage = "Brilliant Ridiculous Assistant is a command line utility tool."
 	app.Version = APP_VER
 	app.Commands = []cli.Command{
+		cmd.CmdInit,
 		cmd.CmdRun,
 		cmd.CmdSync,
 		// cmd.CmdHttp,
