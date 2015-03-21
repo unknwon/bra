@@ -15,9 +15,11 @@
 package cmd
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/Unknwon/com"
@@ -45,8 +47,18 @@ func runInit(ctx *cli.Context) {
 		}
 	}
 
-	if err := ioutil.WriteFile(".bra.toml",
-		bindata.MustAsset("templates/default.bra.toml"), os.ModePerm); err != nil {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Fail to get work directory: %v", err)
+	}
+
+	data, err := bindata.Asset("templates/default.bra.toml")
+	if err != nil {
+		log.Fatal("Fail to get asset: %v", err)
+	}
+	data = bytes.Replace(data, []byte("$APP_NAME"), []byte(path.Base(wd)), -1)
+
+	if err := ioutil.WriteFile(".bra.toml", data, os.ModePerm); err != nil {
 		log.Fatal("Fail to generate default .bra.toml: %v", err)
 	}
 }

@@ -13,7 +13,7 @@ USAGE:
    Bra [global options] command [command options] [arguments...]
 
 VERSION:
-   0.2.0.0319
+   0.2.1.0321
 
 AUTHOR:
   Author - <unknown@email>
