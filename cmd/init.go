@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -58,7 +58,7 @@ func runInit(ctx *cli.Context) {
 		log.Fatal("Fail to get asset: %v", err)
 	}
 
-	appName := path.Base(wd)
+	appName := filepath.Base(wd)
 	if runtime.GOOS == "windows" {
 		appName += ".exe"
 	}
