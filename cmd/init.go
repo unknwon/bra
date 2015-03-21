@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/Unknwon/com"
@@ -56,8 +57,13 @@ func runInit(ctx *cli.Context) {
 	if err != nil {
 		log.Fatal("Fail to get asset: %v", err)
 	}
-	data = bytes.Replace(data, []byte("$APP_NAME"), []byte(path.Base(wd)), -1)
 
+	appName := path.Base(wd)
+	if runtime.GOOS == "windows" {
+		appName += ".exe"
+	}
+
+	data = bytes.Replace(data, []byte("$APP_NAME"), []byte(appName), -1)
 	if err := ioutil.WriteFile(".bra.toml", data, os.ModePerm); err != nil {
 		log.Fatal("Fail to generate default .bra.toml: %v", err)
 	}
