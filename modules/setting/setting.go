@@ -15,6 +15,7 @@
 package setting
 
 import (
+	"bufio"
 	"os"
 	"path"
 	"strings"
@@ -25,7 +26,8 @@ import (
 )
 
 var (
-	WorkDir string
+	WorkDir    string
+	ignoreDirs = []string{".git"}
 )
 
 var Cfg struct {
@@ -50,6 +52,16 @@ func UnpackPath(path string) string {
 	return path
 }
 
+// IgnoreDir determines whether specified dir must be ignored.
+func IgnoreDir(dir string) bool {
+	for _, s := range ignoreDirs {
+		if strings.Contains(dir, s) {
+			return true
+		}
+	}
+	return false
+}
+
 func InitSetting() {
 	var err error
 	WorkDir, err = os.Getwd()
@@ -62,5 +74,18 @@ func InitSetting() {
 		log.Fatal(".bra.toml not found in work directory")
 	} else if _, err = toml.DecodeFile(confPath, &Cfg); err != nil {
 		log.Fatal("Fail to decode .bra.toml: %v", err)
+	}
+
+	// init list of ignored dirs
+	file, err := os.Open(path.Join(WorkDir, ".braignore"))
+	if err == nil {
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if len(line) > 0 && !strings.HasPrefix(line, "#") {
+				ignoreDirs = append(ignoreDirs, line)
+			}
+		}
 	}
 }
