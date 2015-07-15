@@ -34,6 +34,7 @@ var Cfg struct {
 		WatchAll   bool       `toml:"watch_all"`
 		WatchDirs  []string   `toml:"watch_dirs"`
 		WatchExts  []string   `toml:"watch_exts"`
+		Ignore     []string   `toml:"ignore"`
 		BuildDelay int        `toml:"build_delay"`
 		Cmds       [][]string `toml:"cmds"`
 	} `toml:"run"`
@@ -50,6 +51,16 @@ func UnpackPath(path string) string {
 	return path
 }
 
+// IgnoreDir determines whether specified dir must be ignored.
+func IgnoreDir(dir string) bool {
+	for _, s := range Cfg.Run.Ignore {
+		if strings.Contains(dir, s) {
+			return true
+		}
+	}
+	return false
+}
+
 func InitSetting() {
 	var err error
 	WorkDir, err = os.Getwd()
@@ -63,4 +74,7 @@ func InitSetting() {
 	} else if _, err = toml.DecodeFile(confPath, &Cfg); err != nil {
 		log.Fatal("Fail to decode .bra.toml: %v", err)
 	}
+
+	// init default ignore list
+	Cfg.Run.Ignore = com.AppendStr(Cfg.Run.Ignore, ".git")
 }
