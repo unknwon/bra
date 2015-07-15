@@ -3,16 +3,17 @@ init_cmds = [
 	["go", "install"],
 	["go", "build"],
 	["./$APP_NAME"]
-]						# Commands run in start
-watch_all = true		# Watch all sub-directories
-watch_dirs = []			# Directories to watch
-watch_exts = [".go"]	# Extensions to watch
-build_delay = 1500		# Minimal interval to Trigger build event
+]									# Commands run in start
+watch_all = true					# Watch all sub-directories
+watch_dirs = []						# Directories to watch
+watch_exts = [".go"]				# Extensions to watch
+ignore = [".git", "node_modules"] 	# Directories to exclude from watching
+build_delay = 1500					# Minimal interval to Trigger build event
 cmds = [
 	["go", "install"],
 	["go", "build"],
 	["./$APP_NAME"]
-]						# Commands to run
+]									# Commands to run
 
 [sync]
 listen_addr = ":5050"
