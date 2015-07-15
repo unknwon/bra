@@ -15,7 +15,6 @@
 package setting
 
 import (
-	"bufio"
 	"os"
 	"path"
 	"strings"
@@ -26,8 +25,7 @@ import (
 )
 
 var (
-	WorkDir    string
-	ignoreDirs = []string{".git"}
+	WorkDir string
 )
 
 var Cfg struct {
@@ -36,6 +34,7 @@ var Cfg struct {
 		WatchAll   bool       `toml:"watch_all"`
 		WatchDirs  []string   `toml:"watch_dirs"`
 		WatchExts  []string   `toml:"watch_exts"`
+		Ignore     []string   `toml:"ignore"`
 		BuildDelay int        `toml:"build_delay"`
 		Cmds       [][]string `toml:"cmds"`
 	} `toml:"run"`
@@ -54,7 +53,7 @@ func UnpackPath(path string) string {
 
 // IgnoreDir determines whether specified dir must be ignored.
 func IgnoreDir(dir string) bool {
-	for _, s := range ignoreDirs {
+	for _, s := range Cfg.Run.Ignore {
 		if strings.Contains(dir, s) {
 			return true
 		}
@@ -76,16 +75,6 @@ func InitSetting() {
 		log.Fatal("Fail to decode .bra.toml: %v", err)
 	}
 
-	// init list of ignored dirs
-	file, err := os.Open(path.Join(WorkDir, ".braignore"))
-	if err == nil {
-		defer file.Close()
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			line := strings.TrimSpace(scanner.Text())
-			if len(line) > 0 && !strings.HasPrefix(line, "#") {
-				ignoreDirs = append(ignoreDirs, line)
-			}
-		}
-	}
+	// init default ignore list
+	Cfg.Run.Ignore = com.AppendStr(Cfg.Run.Ignore, ".git")
 }

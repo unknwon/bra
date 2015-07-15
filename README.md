@@ -52,6 +52,7 @@ watch_dirs = [
 	"$WORKDIR/routers"
 ]								# Directories to watch
 watch_exts = [".go", ".ini"]	# Extensions to watch
+ignore = [".git", "node_modules"] # Directories to exclude from watching
 build_delay = 1500				# Minimal interval to Trigger build event
 cmds = [
 	["go", "install"],
