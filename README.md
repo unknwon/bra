@@ -13,7 +13,7 @@ USAGE:
    Bra [global options] command [command options] [arguments...]
 
 VERSION:
-   0.3.0.0715
+   0.3.1.0730
 
 AUTHOR:
   Author - <unknown@email>
@@ -53,6 +53,7 @@ watch_dirs = [
 ]								# Directories to watch
 watch_exts = [".go", ".ini"]	# Extensions to watch
 ignore = [".git", "node_modules"] # Directories to exclude from watching
+ignore_files = []             # Regexps for ignoring specific notifies
 build_delay = 1500				# Minimal interval to Trigger build event
 cmds = [
 	["go", "install"],

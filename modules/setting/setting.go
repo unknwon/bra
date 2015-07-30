@@ -17,6 +17,7 @@ package setting
 import (
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -30,13 +31,15 @@ var (
 
 var Cfg struct {
 	Run struct {
-		InitCmds   [][]string `toml:"init_cmds"`
-		WatchAll   bool       `toml:"watch_all"`
-		WatchDirs  []string   `toml:"watch_dirs"`
-		WatchExts  []string   `toml:"watch_exts"`
-		Ignore     []string   `toml:"ignore"`
-		BuildDelay int        `toml:"build_delay"`
-		Cmds       [][]string `toml:"cmds"`
+		InitCmds      [][]string       `toml:"init_cmds"`
+		WatchAll      bool             `toml:"watch_all"`
+		WatchDirs     []string         `toml:"watch_dirs"`
+		WatchExts     []string         `toml:"watch_exts"`
+		IgnoreDirs    []string         `toml:"ignore"`
+		IgnoreFiles   []string         `toml:"ignore_files"`
+		IgnoreRegexps []*regexp.Regexp `toml:"-"`
+		BuildDelay    int              `toml:"build_delay"`
+		Cmds          [][]string       `toml:"cmds"`
 	} `toml:"run"`
 	Sync struct {
 		ListenAddr string `toml:"listen_addr"`
@@ -53,8 +56,18 @@ func UnpackPath(path string) string {
 
 // IgnoreDir determines whether specified dir must be ignored.
 func IgnoreDir(dir string) bool {
-	for _, s := range Cfg.Run.Ignore {
+	for _, s := range Cfg.Run.IgnoreDirs {
 		if strings.Contains(dir, s) {
+			return true
+		}
+	}
+	return false
+}
+
+// IgnoreFile returns true if file path matches ignore regexp.
+func IgnoreFile(file string) bool {
+	for i := range Cfg.Run.IgnoreRegexps {
+		if Cfg.Run.IgnoreRegexps[i].MatchString(file) {
 			return true
 		}
 	}
@@ -75,6 +88,13 @@ func InitSetting() {
 		log.Fatal("Fail to decode .bra.toml: %v", err)
 	}
 
-	// init default ignore list
-	Cfg.Run.Ignore = com.AppendStr(Cfg.Run.Ignore, ".git")
+	// Init default ignore lists.
+	Cfg.Run.IgnoreDirs = com.AppendStr(Cfg.Run.IgnoreDirs, ".git")
+	Cfg.Run.IgnoreRegexps = make([]*regexp.Regexp, len(Cfg.Run.IgnoreFiles))
+	for i, regStr := range Cfg.Run.IgnoreFiles {
+		Cfg.Run.IgnoreRegexps[i], err = regexp.Compile(regStr)
+		if err != nil {
+			log.Fatal("Invalid regexp[%s]: %v", regStr, err)
+		}
+	}
 }

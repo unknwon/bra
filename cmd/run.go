@@ -137,7 +137,7 @@ func runRun(ctx *cli.Context) {
 			case e := <-watcher.Events:
 				needsNotify := true
 
-				if isTmpFile(e.Name) || !hasWatchExt(e.Name) {
+				if isTmpFile(e.Name) || !hasWatchExt(e.Name) || setting.IgnoreFile(e.Name) {
 					continue
 				}
 
