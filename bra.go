@@ -24,7 +24,7 @@ import (
 	"github.com/Unknwon/bra/cmd"
 )
 
-const APP_VER = "0.3.1.0730"
+const APP_VER = "0.3.3.0903"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())

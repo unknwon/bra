@@ -25,21 +25,27 @@ import (
 	"github.com/Unknwon/log"
 )
 
+func init() {
+	log.Prefix = "[Bra]"
+	log.TimeFormat = "01-02 15:04:05"
+}
+
 var (
 	WorkDir string
 )
 
 var Cfg struct {
 	Run struct {
-		InitCmds      [][]string       `toml:"init_cmds"`
-		WatchAll      bool             `toml:"watch_all"`
-		WatchDirs     []string         `toml:"watch_dirs"`
-		WatchExts     []string         `toml:"watch_exts"`
-		IgnoreDirs    []string         `toml:"ignore"`
-		IgnoreFiles   []string         `toml:"ignore_files"`
-		IgnoreRegexps []*regexp.Regexp `toml:"-"`
-		BuildDelay    int              `toml:"build_delay"`
-		Cmds          [][]string       `toml:"cmds"`
+		InitCmds         [][]string       `toml:"init_cmds"`
+		WatchAll         bool             `toml:"watch_all"`
+		WatchDirs        []string         `toml:"watch_dirs"`
+		WatchExts        []string         `toml:"watch_exts"`
+		IgnoreDirs       []string         `toml:"ignore"`
+		IgnoreFiles      []string         `toml:"ignore_files"`
+		IgnoreRegexps    []*regexp.Regexp `toml:"-"`
+		BuildDelay       int              `toml:"build_delay"`
+		InterruptTimeout int              `toml:"interrupt_timout"`
+		Cmds             [][]string       `toml:"cmds"`
 	} `toml:"run"`
 	Sync struct {
 		ListenAddr string `toml:"listen_addr"`
@@ -86,6 +92,10 @@ func InitSetting() {
 		log.Fatal(".bra.toml not found in work directory")
 	} else if _, err = toml.DecodeFile(confPath, &Cfg); err != nil {
 		log.Fatal("Fail to decode .bra.toml: %v", err)
+	}
+
+	if Cfg.Run.InterruptTimeout == 0 {
+		Cfg.Run.InterruptTimeout = 15
 	}
 
 	// Init default ignore lists.

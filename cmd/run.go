@@ -38,6 +38,7 @@ var (
 
 	runningCmd  *exec.Cmd
 	runningLock = &sync.Mutex{}
+	shutdown    = make(chan bool)
 )
 
 var CmdRun = cli.Command{
@@ -77,30 +78,52 @@ func notify(cmds [][]string) {
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 		if err := command.Start(); err != nil {
-			log.Error("Fail to start command %v", cmd)
+			log.Error("Fail to start command %v - %v", cmd, err)
 			fmt.Print("\x07")
 			return
 		}
+
+		log.Debug("Running %v", cmd)
 		runningCmd = command
 		done := make(chan error)
 		go func() {
 			done <- command.Wait()
 		}()
 
+		isShutdown := false
 		select {
 		case err := <-done:
-			if err != nil {
-				if strings.Contains(err.Error(), "signal: killed") {
-					return
-				}
-
-				log.Warn("Fail to execute command %v", cmd)
+			if isShutdown {
+				return
+			} else if err != nil {
+				log.Warn("Fail to execute command %v - %v", cmd, err)
 				fmt.Print("\x07")
 				return
 			}
+		case <-shutdown:
+			isShutdown = true
+			gracefulKill()
+			return
 		}
 	}
 	log.Info("Notify operations are done!")
+}
+
+func gracefulKill() {
+	// Given process a chance to exit itself.
+	runningCmd.Process.Signal(os.Interrupt)
+
+	// Wait for timeout, and force kill after that.
+	for i := 0; i < setting.Cfg.Run.InterruptTimeout; i++ {
+		time.Sleep(1 * time.Second)
+
+		if runningCmd.ProcessState == nil || runningCmd.ProcessState.Exited() {
+			return
+		}
+	}
+
+	log.Info("Fail to graceful kill, force killing...")
+	runningCmd.Process.Kill()
 }
 
 func runRun(ctx *cli.Context) {
@@ -179,7 +202,7 @@ func runRun(ctx *cli.Context) {
 								fmt.Print("\x07")
 							}
 						} else {
-							runningCmd.Process.Kill()
+							shutdown <- true
 						}
 					}
 					go notify(setting.Cfg.Run.Cmds)
