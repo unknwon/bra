@@ -6,22 +6,12 @@ Bra(Brilliant Ridiculous Assistant) is a command line utility tool.
 ## Usage
 
 ```
-NAME:
-   Bra - Brilliant Ridiculous Assistant is a command line utility tool.
-
 USAGE:
    Bra [global options] command [command options] [arguments...]
-
-VERSION:
-   0.3.3.0903
-
-AUTHOR:
-  Author - <unknown@email>
 
 COMMANDS:
    init		initialize config template file
    run		start monitoring and notifying
-   sync		keep syncing two end points
    help, h	Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:

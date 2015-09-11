@@ -18,10 +18,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path"
 	"runtime"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/Unknwon/com"
@@ -126,9 +128,21 @@ func gracefulKill() {
 	runningCmd.Process.Kill()
 }
 
+func catchSignals() {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGTERM)
+	<-sigs
+
+	if runningCmd != nil {
+		shutdown <- true
+	}
+	os.Exit(0)
+}
+
 func runRun(ctx *cli.Context) {
 	setup(ctx)
 
+	go catchSignals()
 	go notify(setting.Cfg.Run.InitCmds)
 
 	watchPathes := append([]string{setting.WorkDir}, setting.Cfg.Run.WatchDirs...)

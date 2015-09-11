@@ -24,7 +24,7 @@ import (
 	"github.com/Unknwon/bra/cmd"
 )
 
-const APP_VER = "0.3.3.0903"
+const APP_VER = "0.3.4.0911"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -40,7 +40,6 @@ func main() {
 		cmd.CmdInit,
 		cmd.CmdRun,
 		cmd.CmdSync,
-		// cmd.CmdHttp,
 	}
 	app.Flags = append(app.Flags, []cli.Flag{}...)
 	app.Run(os.Args)
