@@ -120,6 +120,7 @@ func gracefulKill() {
 		time.Sleep(1 * time.Second)
 
 		if runningCmd.ProcessState == nil || runningCmd.ProcessState.Exited() {
+			runningCmd.Process.Kill()
 			return
 		}
 	}
