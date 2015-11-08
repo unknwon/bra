@@ -27,7 +27,7 @@ import (
 	"github.com/codegangsta/cli"
 	"gopkg.in/fsnotify.v1"
 
-	"github.com/Unknwon/bra/modules/setting"
+	"github.com/zzhua/bra/modules/setting"
 )
 
 var CmdSync = cli.Command{

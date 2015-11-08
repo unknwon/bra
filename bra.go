@@ -21,7 +21,7 @@ import (
 
 	"github.com/codegangsta/cli"
 
-	"github.com/Unknwon/bra/cmd"
+	"github.com/zzhua/bra/cmd"
 )
 
 const APP_VER = "0.3.4.0911"

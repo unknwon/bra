@@ -31,7 +31,7 @@ import (
 	"github.com/codegangsta/cli"
 	"gopkg.in/fsnotify.v1"
 
-	"github.com/Unknwon/bra/modules/setting"
+	"github.com/zzhua/bra/modules/setting"
 )
 
 var (
@@ -114,7 +114,6 @@ func notify(cmds [][]string) {
 func gracefulKill() {
 	// Given process a chance to exit itself.
 	runningCmd.Process.Signal(os.Interrupt)
-
 	// Wait for timeout, and force kill after that.
 	for i := 0; i < setting.Cfg.Run.InterruptTimeout; i++ {
 		time.Sleep(1 * time.Second)
