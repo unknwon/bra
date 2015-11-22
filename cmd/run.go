@@ -191,6 +191,10 @@ func runRun(ctx *cli.Context) {
 				}
 
 				if e.Op&fsnotify.Remove != fsnotify.Remove {
+					//如果是windows，将文件路径改为/
+					if runtime.GOOS == "windows" {
+						e.Name = strings.Replace(e.Name, "\\", "/", -1)
+					}
 					mt, err := com.FileMTime(e.Name)
 					if err != nil {
 						log.Error("Fail to get file modify time: %v", err)
