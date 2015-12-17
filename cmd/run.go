@@ -112,6 +112,12 @@ func notify(cmds [][]string) {
 }
 
 func gracefulKill() {
+	// Directly kill the process on Windows.
+	if runtime.GOOS == "windows" {
+		runningCmd.Process.Kill()
+		return
+	}
+
 	// Given process a chance to exit itself.
 	runningCmd.Process.Signal(os.Interrupt)
 

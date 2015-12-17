@@ -1,7 +1,7 @@
 Brilliant Ridiculous Assistant
 ==============================
 
-Bra(Brilliant Ridiculous Assistant) is a command line utility tool.
+Bra (Brilliant Ridiculous Assistant) is a command line utility tool.
 
 ## Usage
 
