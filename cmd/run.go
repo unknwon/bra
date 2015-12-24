@@ -68,6 +68,40 @@ func hasWatchExt(name string) bool {
 	return false
 }
 
+func splitEnvCmd(args []string) (env, cmd []string) {
+	for i, arg := range args {
+		if strings.Contains(arg, "=") {
+			env = append(env, arg)
+		} else {
+			cmd = args[i:]
+			break
+		}
+	}
+	return env, cmd
+}
+
+func setEnvVar(env []string) (backupEnv map[string]string, err error) {
+	backupEnv = map[string]string{}
+	for _, v := range env {
+		pairs := strings.Split(v, "=")
+		backupEnv[pairs[0]] = os.Getenv(pairs[1])
+		err = os.Setenv(pairs[0], pairs[1])
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+func restoreEnvVar(backupEnv map[string]string) error {
+	for k, v := range backupEnv {
+		if err := os.Setenv(k, v); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func notify(cmds [][]string) {
 	runningLock.Lock()
 	defer func() {
@@ -75,7 +109,14 @@ func notify(cmds [][]string) {
 		runningLock.Unlock()
 	}()
 
-	for _, cmd := range cmds {
+	for _, args := range cmds {
+		env, cmd := splitEnvCmd(args)
+		backupEnv, err := setEnvVar(env)
+		if err != nil {
+			log.Error("Fail to set environment variable %v - %v", env, err)
+			fmt.Print("\x07")
+			return
+		}
 		command := exec.Command(cmd[0], cmd[1:]...)
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
@@ -92,6 +133,11 @@ func notify(cmds [][]string) {
 			done <- command.Wait()
 		}()
 
+		if err := restoreEnvVar(backupEnv); err != nil {
+			log.Error("Fail to restore environment variables %v - %v", backupEnv, err)
+			fmt.Print("\x07")
+			return
+		}
 		isShutdown := false
 		select {
 		case err := <-done:
