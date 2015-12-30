@@ -68,7 +68,49 @@ func hasWatchExt(name string) bool {
 	return false
 }
 
-func notify(cmds [][]string) {
+// runCommand represents a command to run after notified.
+type runCommand struct {
+	Envs []string
+	Name string
+	Args []string
+}
+
+func (cmd *runCommand) String() string {
+	if len(cmd.Envs) > 0 {
+		return fmt.Sprintf("%v %s %v", cmd.Envs, cmd.Name, cmd.Args)
+	}
+	return fmt.Sprintf("%s %v", cmd.Name, cmd.Args)
+}
+
+func parseRunCommand(args []string) *runCommand {
+	runCmd := new(runCommand)
+	i := 0
+	for _, arg := range args {
+		if !strings.Contains(arg, "=") {
+			break
+		}
+		runCmd.Envs = append(runCmd.Envs, arg)
+		i++
+	}
+
+	if len(runCmd.Envs) > 0 {
+		runCmd.Envs = append(runCmd.Envs, os.Environ()...)
+	}
+
+	runCmd.Name = args[i]
+	runCmd.Args = args[i+1:]
+	return runCmd
+}
+
+func parseRunCommands(cmds [][]string) []*runCommand {
+	runCmds := make([]*runCommand, len(cmds))
+	for i, args := range cmds {
+		runCmds[i] = parseRunCommand(args)
+	}
+	return runCmds
+}
+
+func notify(cmds []*runCommand) {
 	runningLock.Lock()
 	defer func() {
 		runningCmd = nil
@@ -76,16 +118,17 @@ func notify(cmds [][]string) {
 	}()
 
 	for _, cmd := range cmds {
-		command := exec.Command(cmd[0], cmd[1:]...)
+		command := exec.Command(cmd.Name, cmd.Args...)
+		command.Env = cmd.Envs
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 		if err := command.Start(); err != nil {
-			log.Error("Fail to start command %v - %v", cmd, err)
+			log.Error("Fail to start command: %v - %v", cmd, err)
 			fmt.Print("\x07")
 			return
 		}
 
-		log.Debug("Running %v", cmd)
+		log.Debug("Running: %s", cmd)
 		runningCmd = command
 		done := make(chan error)
 		go func() {
@@ -98,7 +141,7 @@ func notify(cmds [][]string) {
 			if isShutdown {
 				return
 			} else if err != nil {
-				log.Warn("Fail to execute command %v - %v", cmd, err)
+				log.Warn("Fail to execute command: %v - %v", cmd, err)
 				fmt.Print("\x07")
 				return
 			}
@@ -149,7 +192,7 @@ func runRun(ctx *cli.Context) {
 	setup(ctx)
 
 	go catchSignals()
-	go notify(setting.Cfg.Run.InitCmds)
+	go notify(parseRunCommands(setting.Cfg.Run.InitCmds))
 
 	watchPathes := append([]string{setting.WorkDir}, setting.Cfg.Run.WatchDirs...)
 	if setting.Cfg.Run.WatchAll {
@@ -175,6 +218,8 @@ func runRun(ctx *cli.Context) {
 	defer watcher.Close()
 
 	go func() {
+		runCmds := parseRunCommands(setting.Cfg.Run.Cmds)
+
 		for {
 			select {
 			case e := <-watcher.Events:
@@ -225,7 +270,7 @@ func runRun(ctx *cli.Context) {
 							shutdown <- true
 						}
 					}
-					go notify(setting.Cfg.Run.Cmds)
+					go notify(runCmds)
 				}
 			}
 		}
