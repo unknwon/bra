@@ -11,7 +11,7 @@ ignore = [".git", "node_modules"] 	# Directories to exclude from watching
 ignore_files = []					# Regexps for ignoring specific notifies
 build_delay = 1500					# Minimal interval to Trigger build event
 interrupt_timout = 15				# Time to wait until force kill
-force_kill = true					# Do not wail for exit and directly kill
+graceful_kill = false				# Wait for exit and before directly kill
 cmds = [
 	["go", "install"],
 	["go", "build"],

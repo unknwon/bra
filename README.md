@@ -36,7 +36,7 @@ Change following values in your `.bra.toml`:
 ```toml
 [run]
 interrupt_timout = 15
-force_kill = false
+graceful_kill = true
 ```
 
 This will send `os.Interrupt` signal first and wait for `15` seconds before force kill.

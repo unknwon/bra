@@ -45,7 +45,7 @@ var Cfg struct {
 		IgnoreRegexps    []*regexp.Regexp `toml:"-"`
 		BuildDelay       int              `toml:"build_delay"`
 		InterruptTimeout int              `toml:"interrupt_timout"`
-		ForceKill        bool             `toml:"force_kill"`
+		GracefulKill     bool             `toml:"graceful_kill"`
 		Cmds             [][]string       `toml:"cmds"`
 	} `toml:"run"`
 	Sync struct {
