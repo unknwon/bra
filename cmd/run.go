@@ -155,8 +155,8 @@ func notify(cmds []*runCommand) {
 }
 
 func gracefulKill() {
-	// Directly kill the process on Windows.
-	if runtime.GOOS == "windows" {
+	// Directly kill the process on Windows or under request.
+	if runtime.GOOS == "windows" || setting.Cfg.Run.ForceKill {
 		runningCmd.Process.Kill()
 		return
 	}

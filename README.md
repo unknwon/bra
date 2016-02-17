@@ -27,6 +27,20 @@ To work with a new app, you have to have a `.bra.toml` file under the work direc
 $ bra init
 ```
 
+## FAQs
+
+### How to I gracefully shutdown the application?
+
+Change following values in your `.bra.toml`:
+
+```toml
+[run]
+interrupt_timout = 15
+force_kill = false
+```
+
+This will send `os.Interrupt` signal first and wait for `15` seconds before force kill.
+
 ## Configuration
 
 An example configuration take form [gogsweb](https://github.com/gogits/gogsweb):
