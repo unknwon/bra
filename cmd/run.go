@@ -188,7 +188,7 @@ func catchSignals() {
 	os.Exit(0)
 }
 
-func runRun(ctx *cli.Context) {
+func runRun(ctx *cli.Context) error {
 	setup(ctx)
 
 	go catchSignals()
@@ -288,4 +288,5 @@ func runRun(ctx *cli.Context) {
 		fmt.Printf("-> %s\n", p)
 	}
 	select {}
+	return nil
 }

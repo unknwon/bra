@@ -206,7 +206,7 @@ func runClient(ctx *cli.Context) {
 	select {}
 }
 
-func runSync(ctx *cli.Context) {
+func runSync(ctx *cli.Context) error {
 	setup(ctx)
 
 	switch ctx.String("mode") {
@@ -217,4 +217,5 @@ func runSync(ctx *cli.Context) {
 	default:
 		log.Fatal("Unrecognized run mode: %s", ctx.String("mode"))
 	}
+	return nil
 }

@@ -37,14 +37,14 @@ var CmdInit = cli.Command{
 	Flags:  []cli.Flag{},
 }
 
-func runInit(ctx *cli.Context) {
+func runInit(ctx *cli.Context) error {
 	if com.IsExist(".bra.toml") {
 		fmt.Print("There is a .bra.toml in the work directory, do you want to overwrite?(y/n): ")
 		var answer string
 		fmt.Scan(&answer)
 		if strings.ToLower(answer) != "y" {
 			fmt.Println("Existed file is untouched.")
-			return
+			return nil
 		}
 	}
 
@@ -67,4 +67,5 @@ func runInit(ctx *cli.Context) {
 	if err := ioutil.WriteFile(".bra.toml", data, os.ModePerm); err != nil {
 		log.Fatal("Fail to generate default .bra.toml: %v", err)
 	}
+	return nil
 }
