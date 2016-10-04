@@ -19,7 +19,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 
 	"github.com/Unknwon/bra/cmd"
 )

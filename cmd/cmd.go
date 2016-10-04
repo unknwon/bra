@@ -15,7 +15,7 @@ package cmd
 
 import (
 	"github.com/Unknwon/log"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 
 	"github.com/Unknwon/bra/modules/setting"
 )
