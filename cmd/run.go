@@ -279,7 +279,7 @@ func runRun(ctx *cli.Context) error {
 	log.Info("Following directories are monitored:")
 	for i, p := range watchPathes {
 		if err = watcher.Add(setting.UnpackPath(p)); err != nil {
-			log.Fatal("Fail to watch diretory(%s): %v", p, err)
+			log.Fatal("Fail to watch directory(%s): %v", p, err)
 		}
 		if i > 0 && !log.NonColor {
 			p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
