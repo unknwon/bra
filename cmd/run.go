@@ -31,7 +31,7 @@ import (
 	"github.com/urfave/cli"
 	"gopkg.in/fsnotify.v1"
 
-	"github.com/Unknwon/bra/modules/setting"
+	"github.com/zzhua/bra/modules/setting"
 )
 
 var (
@@ -163,12 +163,12 @@ func gracefulKill() {
 
 	// Given process a chance to exit itself.
 	runningCmd.Process.Signal(os.Interrupt)
-
 	// Wait for timeout, and force kill after that.
 	for i := 0; i < setting.Cfg.Run.InterruptTimeout; i++ {
 		time.Sleep(1 * time.Second)
 
 		if runningCmd.ProcessState == nil || runningCmd.ProcessState.Exited() {
+			runningCmd.Process.Kill()
 			return
 		}
 	}
@@ -242,6 +242,10 @@ func runRun(ctx *cli.Context) error {
 				}
 
 				if e.Op&fsnotify.Remove != fsnotify.Remove {
+					//如果是windows，将文件路径改为/
+					if runtime.GOOS == "windows" {
+						e.Name = strings.Replace(e.Name, "\\", "/", -1)
+					}
 					mt, err := com.FileMTime(e.Name)
 					if err != nil {
 						log.Error("Fail to get file modify time: %v", err)
