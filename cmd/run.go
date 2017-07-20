@@ -200,11 +200,13 @@ func runRun(ctx *cli.Context) error {
 		for _, dir := range watchPathes[1:] {
 			dirs, err := com.GetAllSubDirs(setting.UnpackPath(dir))
 			if err != nil {
-				log.Fatal("Fail to get sub-directories: %v", err)
-			}
-			for i := range dirs {
-				if !setting.IgnoreDir(dirs[i]) {
-					subdirs = append(subdirs, path.Join(dir, dirs[i]))
+
+				log.Error("Fail to get sub-directories: %v", err)
+			}else{
+				for i := range dirs {
+					if !setting.IgnoreDir(dirs[i]) {
+						subdirs = append(subdirs, path.Join(dir, dirs[i]))
+					}
 				}
 			}
 		}
@@ -213,7 +215,7 @@ func runRun(ctx *cli.Context) error {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		log.Fatal("Fail to create new watcher: %v", err)
+		log.Error("Fail to create new watcher: %v", err)
 	}
 	defer watcher.Close()
 
@@ -279,11 +281,12 @@ func runRun(ctx *cli.Context) error {
 	log.Info("Following directories are monitored:")
 	for i, p := range watchPathes {
 		if err = watcher.Add(setting.UnpackPath(p)); err != nil {
-			log.Fatal("Fail to watch directory(%s): %v", p, err)
-		}
-		if i > 0 && !log.NonColor {
-			p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
-			p = strings.Replace(p, "$WORKDIR", "\033[47;30m$WORKDIR\033[0m", 1)
+			log.Error("Fail to watch directory(%s): %v", p, err)
+		}else{
+			if i > 0 && !log.NonColor {
+				p = strings.Replace(p, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
+				p = strings.Replace(p, "$WORKDIR", "\033[47;30m$WORKDIR\033[0m", 1)
+			}
 		}
 		fmt.Printf("-> %s\n", p)
 	}
