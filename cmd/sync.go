@@ -25,7 +25,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/Unknwon/log"
 	"github.com/urfave/cli"
-	"gopkg.in/fsnotify.v1"
+	"gopkg.in/fsnotify/fsnotify.v1"
 
 	"github.com/Unknwon/bra/modules/setting"
 )
