@@ -241,7 +241,7 @@ func runRun(ctx *cli.Context) error {
 					showName = strings.Replace(showName, setting.WorkDir, "\033[47;30m$WORKDIR\033[0m", 1)
 				}
 
-				if e.Op&fsnotify.Remove != fsnotify.Remove {
+				if e.Op&fsnotify.Remove != fsnotify.Remove && e.Op&fsnotify.Rename != fsnotify.Rename {
 					mt, err := com.FileMTime(e.Name)
 					if err != nil {
 						log.Error("Fail to get file modify time: %v", err)
