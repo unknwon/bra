@@ -47,23 +47,24 @@ An example configuration take form [gogsweb](https://github.com/gogits/gogsweb):
 
 ```
 [run]
-init_cmds = [["./gogsweb"]]		# Commands run in start
-watch_all = true				# Watch all sub-directories
-watch_dirs = [
-	"$WORKDIR/conf",
-	"$WORKDIR/models",
-	"$WORKDIR/modules",
-	"$WORKDIR/routers"
-]								# Directories to watch
-watch_exts = [".go", ".ini"]	# Extensions to watch
+init_cmds = [["./gogsweb"]]       # Commands run in start
+watch_all = true                  # Watch all sub-directories
+watch_dirs = [                    # Directories to watch
+  "$WORKDIR/conf",
+  "$WORKDIR/models",
+  "$WORKDIR/modules",
+  "$WORKDIR/routers"
+]
+watch_exts = [".go", ".ini"]      # Extensions to watch
 ignore = [".git", "node_modules"] # Directories to exclude from watching
-ignore_files = []             # Regexps for ignoring specific notifies
-build_delay = 1500				# Minimal interval to Trigger build event
-cmds = [
-	["go", "install"],
-	["go", "build"],
-	["./gogsweb"]
-]								# Commands to run
+ignore_files = []                 # Regexps for ignoring specific notifies
+follow_symlinks = false           # Enable/disable following symbolic links of sub directories
+build_delay = 1500                # Minimal interval to Trigger build event
+cmds = [                          # Commands to run
+  ["go", "install"],
+  ["go", "build"],
+  ["./gogsweb"]
+]
 ```
 
 ## License

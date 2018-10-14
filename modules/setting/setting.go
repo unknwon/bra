@@ -43,6 +43,7 @@ var Cfg struct {
 		IgnoreDirs       []string         `toml:"ignore"`
 		IgnoreFiles      []string         `toml:"ignore_files"`
 		IgnoreRegexps    []*regexp.Regexp `toml:"-"`
+		FollowSymlinks   bool             `toml:"follow_symlinks"`
 		BuildDelay       int              `toml:"build_delay"`
 		InterruptTimeout int              `toml:"interrupt_timout"`
 		GracefulKill     bool             `toml:"graceful_kill"`

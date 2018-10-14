@@ -198,10 +198,18 @@ func runRun(ctx *cli.Context) error {
 	if setting.Cfg.Run.WatchAll {
 		subdirs := make([]string, 0, 10)
 		for _, dir := range watchPathes[1:] {
-			dirs, err := com.GetAllSubDirs(setting.UnpackPath(dir))
+			var dirs []string
+			var err error
+			if setting.Cfg.Run.FollowSymlinks {
+				dirs, err = com.LgetAllSubDirs(setting.UnpackPath(dir))
+			} else {
+				dirs, err = com.GetAllSubDirs(setting.UnpackPath(dir))
+			}
+
 			if err != nil {
 				log.Fatal("Fail to get sub-directories: %v", err)
 			}
+
 			for i := range dirs {
 				if !setting.IgnoreDir(dirs[i]) {
 					subdirs = append(subdirs, path.Join(dir, dirs[i]))
