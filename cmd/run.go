@@ -26,12 +26,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Unknwon/com"
-	"github.com/Unknwon/log"
+	"github.com/unknwon/com"
+	"github.com/unknwon/log"
 	"github.com/urfave/cli"
 	"gopkg.in/fsnotify/fsnotify.v1"
 
-	"github.com/Unknwon/bra/modules/setting"
+	"github.com/unknwon/bra/modules/setting"
 )
 
 var (

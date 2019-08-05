@@ -23,11 +23,11 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/Unknwon/com"
-	"github.com/Unknwon/log"
+	"github.com/unknwon/com"
+	"github.com/unknwon/log"
 	"github.com/urfave/cli"
 
-	"github.com/Unknwon/bra/modules/bindata"
+	"github.com/unknwon/bra/modules/bindata"
 )
 
 var CmdInit = cli.Command{

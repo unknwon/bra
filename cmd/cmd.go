@@ -14,10 +14,10 @@
 package cmd
 
 import (
-	"github.com/Unknwon/log"
+	"github.com/unknwon/log"
 	"github.com/urfave/cli"
 
-	"github.com/Unknwon/bra/modules/setting"
+	"github.com/unknwon/bra/modules/setting"
 )
 
 var AppVer string

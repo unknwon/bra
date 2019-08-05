@@ -21,8 +21,8 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/Unknwon/com"
-	"github.com/Unknwon/log"
+	"github.com/unknwon/com"
+	"github.com/unknwon/log"
 )
 
 func init() {
