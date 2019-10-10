@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -73,6 +74,8 @@ type runCommand struct {
 	Envs []string
 	Name string
 	Args []string
+
+	osEnvAdded bool
 }
 
 func (cmd *runCommand) String() string {
@@ -94,6 +97,7 @@ func parseRunCommand(args []string) *runCommand {
 	}
 
 	if len(runCmd.Envs) > 0 {
+		runCmd.osEnvAdded = true
 		runCmd.Envs = append(runCmd.Envs, os.Environ()...)
 	}
 
@@ -110,6 +114,22 @@ func parseRunCommands(cmds [][]string) []*runCommand {
 	return runCmds
 }
 
+func envFromFiles() []string {
+	envs := make([]string, 0)
+
+	for _, envFile := range setting.Cfg.Run.EnvFiles {
+		b, err := ioutil.ReadFile(envFile)
+		if err != nil {
+			log.Error("Fail to read env file %s: :+v", envFile, err)
+			continue
+		}
+
+		envs = append(envs, strings.Split(string(b), "\n")...)
+	}
+
+	return envs
+}
+
 func notify(cmds []*runCommand) {
 	runningLock.Lock()
 	defer func() {
@@ -120,6 +140,15 @@ func notify(cmds []*runCommand) {
 	for _, cmd := range cmds {
 		command := exec.Command(cmd.Name, cmd.Args...)
 		command.Env = cmd.Envs
+
+		envFromFiles := envFromFiles()
+		if len(envFromFiles) > 0 {
+			command.Env = append(command.Env, envFromFiles...)
+			if !cmd.osEnvAdded {
+				command.Env = append(command.Env, os.Environ()...)
+			}
+		}
+
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 		if err := command.Start(); err != nil {

@@ -42,6 +42,7 @@ var Cfg struct {
 		WatchExts        []string         `toml:"watch_exts"`
 		IgnoreDirs       []string         `toml:"ignore"`
 		IgnoreFiles      []string         `toml:"ignore_files"`
+		EnvFiles         []string         `toml:"env_files"`
 		IgnoreRegexps    []*regexp.Regexp `toml:"-"`
 		FollowSymlinks   bool             `toml:"follow_symlinks"`
 		BuildDelay       int              `toml:"build_delay"`
