@@ -56,6 +56,7 @@ watch_dirs = [                    # Directories to watch
   "$WORKDIR/routers"
 ]
 watch_exts = [".go", ".ini"]      # Extensions to watch
+env_files = [".env"]              # Load env vars from file
 ignore = [".git", "node_modules"] # Directories to exclude from watching
 ignore_files = []                 # Regexps for ignoring specific notifies
 follow_symlinks = false           # Enable/disable following symbolic links of sub directories
