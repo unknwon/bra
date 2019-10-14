@@ -120,7 +120,7 @@ func envFromFiles() []string {
 	for _, envFile := range setting.Cfg.Run.EnvFiles {
 		b, err := ioutil.ReadFile(envFile)
 		if err != nil {
-			log.Warn("Fail to read env file %s: %+v", envFile, err)
+			log.Warn("Fail to read env file %q: %v", envFile, err)
 			continue
 		}
 
