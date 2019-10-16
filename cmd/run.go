@@ -126,10 +126,7 @@ func envFromFiles() []string {
 
 		envLines := strings.Split(string(b), "\n")
 		for _, env := range envLines {
-			if strings.HasPrefix(env, "export ") {
-				env = strings.Split(env, "export ")[1]
-			}
-			envs = append(envs, env)
+			envs = append(envs, strings.TrimPrefix(env, "export "))
 		}
 	}
 
