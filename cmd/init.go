@@ -27,10 +27,10 @@ import (
 	"github.com/unknwon/log"
 	"github.com/urfave/cli"
 
-	"github.com/unknwon/bra/modules/bindata"
+	"github.com/unknwon/bra/internal/bindata"
 )
 
-var CmdInit = cli.Command{
+var Init = cli.Command{
 	Name:   "init",
 	Usage:  "initialize config template file",
 	Action: runInit,

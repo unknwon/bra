@@ -32,7 +32,7 @@ import (
 	"github.com/urfave/cli"
 	"gopkg.in/fsnotify/fsnotify.v1"
 
-	"github.com/unknwon/bra/modules/setting"
+	"github.com/unknwon/bra/internal/setting"
 )
 
 var (
@@ -44,7 +44,7 @@ var (
 	shutdown    = make(chan bool)
 )
 
-var CmdRun = cli.Command{
+var Run = cli.Command{
 	Name:   "run",
 	Usage:  "start monitoring and notifying",
 	Action: runRun,

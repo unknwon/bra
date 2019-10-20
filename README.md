@@ -7,16 +7,17 @@ Bra (Brilliant Ridiculous Assistant) is a command line utility tool.
 
 ```
 USAGE:
-   Bra [global options] command [command options] [arguments...]
+   bra [global options] command [command options] [arguments...]
 
 COMMANDS:
-   init		initialize config template file
-   run		start monitoring and notifying
-   help, h	Shows a list of commands or help for one command
+   init     initialize config template file
+   run      start monitoring and notifying
+   sync     keep syncing two end points
+   help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h		show help
-   --version, -v	print the version
+   --help, -h     show help
+   --version, -v  print the version
 ```
 
 ## Quick Start
@@ -43,30 +44,7 @@ This will send `os.Interrupt` signal first and wait for `15` seconds before forc
 
 ## Configuration
 
-An example configuration take form [gogsweb](https://github.com/gogits/gogsweb):
-
-```
-[run]
-init_cmds = [["./gogsweb"]]       # Commands run in start
-watch_all = true                  # Watch all sub-directories
-watch_dirs = [                    # Directories to watch
-  "$WORKDIR/conf",
-  "$WORKDIR/models",
-  "$WORKDIR/modules",
-  "$WORKDIR/routers"
-]
-watch_exts = [".go", ".ini"]      # Extensions to watch
-env_files = [".env"]              # Load env vars from files
-ignore = [".git", "node_modules"] # Directories to exclude from watching
-ignore_files = []                 # Regexps for ignoring specific notifies
-follow_symlinks = false           # Enable/disable following symbolic links of sub directories
-build_delay = 1500                # Minimal interval to Trigger build event
-cmds = [                          # Commands to run
-  ["go", "install"],
-  ["go", "build"],
-  ["./gogsweb"]
-]
-```
+An example configuration is available as [default.bra.toml](templates/default.bra.toml).
 
 ## License
 

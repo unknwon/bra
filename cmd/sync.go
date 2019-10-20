@@ -27,10 +27,10 @@ import (
 	"github.com/urfave/cli"
 	"gopkg.in/fsnotify/fsnotify.v1"
 
-	"github.com/unknwon/bra/modules/setting"
+	"github.com/unknwon/bra/internal/setting"
 )
 
-var CmdSync = cli.Command{
+var Sync = cli.Command{
 	Name:   "sync",
 	Usage:  "keep syncing two end points",
 	Action: runSync,

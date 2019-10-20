@@ -3,3 +3,5 @@
 .DS_Store
 bra.sublime-project
 bra.sublime-workspace
+/bra
+/.vscode

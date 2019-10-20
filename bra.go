@@ -17,30 +17,31 @@ package main
 
 import (
 	"os"
-	"runtime"
 
+	"github.com/unknwon/log"
 	"github.com/urfave/cli"
 
 	"github.com/unknwon/bra/cmd"
 )
 
-const APP_VER = "0.4.2.0603"
+const version = "0.4.3.1020"
 
 func init() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	cmd.AppVer = APP_VER
+	cmd.AppVer = version
 }
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "Bra"
-	app.Usage = "Brilliant Ridiculous Assistant is a command line utility tool."
-	app.Version = APP_VER
-	app.Commands = []cli.Command{
-		cmd.CmdInit,
-		cmd.CmdRun,
-		cmd.CmdSync,
+	app := &cli.App{
+		Name:  "Bra",
+		Usage: "Brilliant Ridiculous Assistant is a command line utility tool",
+		Commands: []cli.Command{
+			cmd.Init,
+			cmd.Run,
+			cmd.Sync,
+		},
+		Version: version,
 	}
-	app.Flags = append(app.Flags, []cli.Flag{}...)
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal("%v", err)
+	}
 }
