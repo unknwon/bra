@@ -3,7 +3,7 @@ Brilliant Ridiculous Assistant
 
 Bra (Brilliant Ridiculous Assistant) is a command line utility tool.
 
-### Installtion
+### Installation
 
 ```bash
 $ env GO111MODULE=on go get github.com/unknwon/bra
