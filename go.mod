@@ -8,6 +8,6 @@ require (
 	github.com/unknwon/com v1.0.1
 	github.com/unknwon/log v0.0.0-20150304194804-e617c87089d3
 	github.com/urfave/cli v1.22.1
-	golang.org/x/sys v0.0.0-20191020152052-9984515f0562 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/fsnotify/fsnotify.v1 v1.4.7
 )
