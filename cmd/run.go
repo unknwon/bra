@@ -27,11 +27,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/unknwon/com"
 	"github.com/unknwon/log"
 	"github.com/urfave/cli"
-	"gopkg.in/fsnotify/fsnotify.v1"
 
+	"github.com/gohugoio/hugo/watcher/filenotify"
 	"github.com/unknwon/bra/internal/setting"
 )
 
@@ -53,10 +54,7 @@ var Run = cli.Command{
 
 // isTmpFile returns true if the event was for temporary files.
 func isTmpFile(name string) bool {
-	if strings.HasSuffix(strings.ToLower(name), ".tmp") {
-		return true
-	}
-	return false
+	return strings.HasSuffix(strings.ToLower(name), ".tmp")
 }
 
 // hasWatchExt returns true if the file name has watched extension.
@@ -112,6 +110,21 @@ func parseRunCommands(cmds [][]string) []*runCommand {
 		runCmds[i] = parseRunCommand(args)
 	}
 	return runCmds
+}
+
+func getWatcher() (filenotify.FileWatcher, error) {
+	if setting.Cfg.Run.Poll {
+		interval := setting.Cfg.Run.PollInterval
+
+		if interval < 500 {
+			interval = 500
+		}
+
+		pollInterval := time.Duration(interval) * time.Millisecond
+		return filenotify.NewPollingWatcher(pollInterval), nil
+	}
+
+	return filenotify.NewEventWatcher()
 }
 
 func envFromFiles() []string {
@@ -251,18 +264,19 @@ func runRun(ctx *cli.Context) error {
 		watchPathes = append(watchPathes, subdirs...)
 	}
 
-	watcher, err := fsnotify.NewWatcher()
+	watcher, err := getWatcher()
 	if err != nil {
 		log.Fatal("Fail to create new watcher: %v", err)
 	}
+
 	defer watcher.Close()
 
 	go func() {
 		runCmds := parseRunCommands(setting.Cfg.Run.Cmds)
-
+		eventsChannel := watcher.Events()
 		for {
 			select {
-			case e := <-watcher.Events:
+			case e := <-eventsChannel:
 				needsNotify := true
 
 				if isTmpFile(e.Name) || !hasWatchExt(e.Name) || setting.IgnoreFile(e.Name) {
@@ -328,5 +342,4 @@ func runRun(ctx *cli.Context) error {
 		fmt.Printf("-> %s\n", p)
 	}
 	select {}
-	return nil
 }

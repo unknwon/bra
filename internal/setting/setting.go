@@ -40,6 +40,8 @@ var Cfg struct {
 		WatchAll         bool             `toml:"watch_all"`
 		WatchDirs        []string         `toml:"watch_dirs"`
 		WatchExts        []string         `toml:"watch_exts"`
+		Poll             bool             `toml:"poll"`
+		PollInterval     int              `toml:"poll_interval"`
 		IgnoreDirs       []string         `toml:"ignore"`
 		IgnoreFiles      []string         `toml:"ignore_files"`
 		EnvFiles         []string         `toml:"env_files"`
